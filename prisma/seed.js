@@ -20,7 +20,37 @@ async function seed() {
 
   console.log("Contact created", createdContact);
 
-  // Don't edit any of the code below this line
+  const createdMovie = await prisma.movie.create({
+    data: {
+      title: "The Silence of the Lambs",
+      runtimeMins: 120,
+      screening: {
+        create: {
+          startsAt: new Date("June 7, 2022 22:15:00"),
+          screen: {
+            create: {
+              number: 1,
+            },
+          },
+        },
+      },
+    },
+    include: {
+      screening: true,
+    },
+  });
+
+  console.log("Movie created", createdMovie);
+
+  const createdTicket = await prisma.ticket.create({
+    data: {
+      customerId: createdCustomer.id,
+      screeningId: createdMovie.screening[0].id,
+    },
+  });
+
+  console.log("Ticket created", createdTicket);
+
   process.exit(0);
 }
 
