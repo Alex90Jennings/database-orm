@@ -8,8 +8,6 @@ async function seed() {
     },
   });
 
-  console.log("Customer created", createdCustomer);
-
   const createdContact = await prisma.contact.create({
     data: {
       phone: "023479082347190",
@@ -18,37 +16,39 @@ async function seed() {
     },
   });
 
-  console.log("Contact created", createdContact);
-
-  const createdMovie = await prisma.movie.create({
+  const createdScreen = await prisma.screen.create({
     data: {
-      title: "The Silence of the Lambs",
-      runtimeMins: 120,
-      screening: {
-        create: {
-          startsAt: new Date("June 7, 2022 22:15:00"),
-          screen: {
-            create: {
-              number: 1,
-            },
-          },
-        },
-      },
-    },
-    include: {
-      screening: true,
+      number: 1,
     },
   });
 
-  console.log("Movie created", createdMovie);
+  const createdMovie = await prisma.movie.create({
+    data: {
+      title: "Capitan Fantastic",
+      runtimeMins: 118,
+    },
+  });
+
+  const createdScreening = await prisma.screening.create({
+    data: {
+      startsAt: new Date("June 7, 2022 22:15:00"),
+      movieId: createdMovie.id,
+      screenId: createdScreen.id,
+    },
+  });
 
   const createdTicket = await prisma.ticket.create({
     data: {
       customerId: createdCustomer.id,
-      screeningId: createdMovie.screening[0].id,
+      screeningId: createdScreening.id,
     },
   });
 
+  console.log("Customer created", createdCustomer);
+  console.log("Contact created", createdContact);
+  console.log("Screen created", createdScreen);
+  console.log("Movie created", createdMovie);
+  console.log("Screening created", createdScreening);
   console.log("Ticket created", createdTicket);
 
   process.exit(0);
